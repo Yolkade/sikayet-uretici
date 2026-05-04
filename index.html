@@ -1,111 +1,109 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Şikayet Metni Üretici PRO</title>
+<title>Şikayet Üretici PRO+</title>
 <style>
-body {
-  font-family: Arial;
-  background:#0f172a;
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+body {font-family: Arial; background:#0f172a; color:#fff; display:flex; justify-content:center; align-items:center; height:100vh;}
+.box {width:700px;}
+input, button, textarea {
+  width:100%; padding:12px; margin-top:10px; border-radius:8px; border:none;
 }
-.box {
-  width:650px;
-}
-input, button {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
-}
-button {
-  background:#22c55e;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-}
-textarea {
-  width:100%;
-  height:200px;
-  margin-top:15px;
-  border-radius:8px;
-  padding:10px;
-}
+button {background:#22c55e; color:white; cursor:pointer;}
+textarea {height:220px;}
 </style>
 </head>
 
 <body>
 <div class="box">
-  <h2>🔥 Şikayet Metni Üretici</h2>
+<h2>🔥 Gelişmiş Şikayet Üretici</h2>
 
-  <input id="konu" placeholder="Şikayet konusu (örn: beyaz eşya servisi)">
-  <input id="min" type="number" placeholder="Minimum karakter (örn: 400)">
-  <input id="max" type="number" placeholder="Maksimum karakter (örn: 900)">
+<input id="konu" placeholder="Konu (örn: beyaz eşya servisi)">
+<input id="min" type="number" placeholder="Min karakter (örn: 400)">
+<input id="max" type="number" placeholder="Max karakter (örn: 900)">
 
-  <button onclick="uret()">Metin Üret & Kopyala</button>
+<button onclick="uret()">Metin Üret & Kopyala</button>
+<textarea id="out" readonly></textarea>
 
-  <textarea id="out" readonly></textarea>
 </div>
 
 <script>
+
+const baslangic = [
+  "Açıkçası böyle bir durum yaşayacağımı hiç düşünmezdim.",
+  "Bu kadar uğraştıracaklarını tahmin etmemiştim.",
+  "Başta her şey normal görünüyordu ama sonrasında işler değişti.",
+  "İlk başta sıradan bir servis süreci sandım.",
+  "Bu firmayla iletişime geçtiğimde her şey oldukça basitti."
+];
+
 const giris = [
-  "Google üzerinden ulaştığım bu {konu}",
-  "İnternette yaptığım arama sonucunda bulduğum bu {konu}",
-  "Google reklamları sayesinde karşıma çıkan bu {konu}",
+  "Google üzerinden bulduğum bu {konu}",
+  "İnternette karşıma çıkan bu {konu}",
   "Acil ihtiyaç nedeniyle ulaştığım bu {konu}",
+  "Google reklamı sayesinde ulaştığım bu {konu}",
   "Yetkili servis sandığım bu {konu}"
 ];
 
-const orta = [
-  "başlangıçta güven verici bir izlenim oluşturdu.",
-  "kendini yetkili servis gibi tanıttı.",
-  "reklamlarında resmi servis algısı yarattı.",
-  "ilk görüşmede profesyonel bir yaklaşım sergiledi.",
-  "başta normal bir hizmet sunuyor gibi görünüyordu."
+const gelisme = [
+  "başlangıçta normal bir süreç gibi ilerledi.",
+  "ilk etapta herhangi bir sorun yoktu.",
+  "ilk konuşmada her şey makul görünüyordu.",
+  "ilk başta güven verici bir yaklaşım sergilendi.",
+  "başta sıradan bir işlem gibi başladı."
 ];
 
 const olay = [
-  "Cihaz teslim edildikten sonra beklenenden çok daha yüksek bir ücret talep edildi.",
-  "Başlangıçta söylenen fiyat sonradan ciddi şekilde artırıldı.",
-  "Süreç ilerledikçe arıza büyütülerek maliyet yükseltildi.",
-  "İlk belirtilen ücret ile sonradan istenen tutar arasında büyük fark oluştu.",
-  "Sonradan farklı gerekçelerle ek ücretler çıkarıldı."
+  "Ancak sonrasında arıza büyütülerek yüksek bir ücret talep edildi.",
+  "Daha sonra hiç beklemediğim şekilde çok yüksek bir fiyat çıkarıldı.",
+  "Süreç ilerledikçe sürekli yeni masraflar ortaya çıkarıldı.",
+  "Başta söylenen fiyat ile sonradan istenen ücret arasında büyük fark oluştu.",
+  "Sonradan farklı bahanelerle ücret sürekli artırıldı."
 ];
 
 const sonuc = [
-  "Ödeme yapıldıktan sonra iletişim tamamen kesildi.",
-  "Ödeme sonrası firmaya ulaşmak mümkün olmadı.",
-  "Telefonlara cevap verilmemeye başlandı.",
-  "Cihaz geri verilmedi ve süreç belirsiz kaldı.",
-  "Hiçbir şekilde geri dönüş alamadım."
+  "Ödeme yaptıktan sonra ise işler tamamen değişti.",
+  "Ücreti ödedikten sonra iletişim kopmaya başladı.",
+  "Ödeme sonrasında artık ulaşmak imkansız hale geldi.",
+  "Parayı aldıktan sonra tamamen ortadan kayboldular.",
+  "Ödemeden sonra hiçbir şekilde geri dönüş yapılmadı."
 ];
 
-const bitis = [
-  "Bu durum açıkça yanıltıcıdır.",
-  "Benzer mağduriyetlerin yaşanmaması için incelenmelidir.",
-  "Reklamlarının denetlenmesi gerektiğini düşünüyorum.",
-  "Kullanıcılar açısından riskli bir durumdur.",
-  "Bu tür uygulamaların önüne geçilmelidir."
+const final = [
+  "Telefonlara cevap verilmiyor ve cihazım hâlâ geri verilmedi.",
+  "Defalarca aramama rağmen kimseye ulaşamadım.",
+  "Hiçbir şekilde geri dönüş alamadım.",
+  "Süreç tamamen belirsiz bir şekilde bırakıldı.",
+  "Cihazımın durumu hakkında hiçbir bilgi verilmiyor."
+];
+
+const kapanis = [
+  "Bu durumun incelenmesi gerektiğini düşünüyorum.",
+  "Benzer mağduriyetlerin yaşanmaması için gerekli işlemler yapılmalı.",
+  "Bu tarz uygulamaların denetlenmesi gerekiyor.",
+  "Aynı durumu başkalarının yaşamaması için paylaşmak istedim.",
+  "Bu konuda dikkatli olunması gerektiğini düşünüyorum."
 ];
 
 function r(a){return a[Math.floor(Math.random()*a.length)]}
 
 function uret(){
   let konu = document.getElementById("konu").value || "servis";
-  let min = parseInt(document.getElementById("min").value) || 300;
+  let min = parseInt(document.getElementById("min").value) || 400;
   let max = parseInt(document.getElementById("max").value) || 900;
 
   let metin = "";
 
   while(metin.length < min){
-    let cumle = `${r(giris).replace("{konu}",konu)} ${r(orta)} ${r(olay)} ${r(sonuc)} ${r(bitis)} `;
-    metin += cumle;
+    let parca = `
+${r(baslangic)} 
+${r(giris).replace("{konu}",konu)} ${r(gelisme)} 
+${r(olay)} 
+${r(sonuc)} 
+${r(final)} 
+${r(kapanis)}
+`;
+    metin += parca;
   }
 
   if(metin.length > max){
@@ -113,10 +111,9 @@ function uret(){
   }
 
   document.getElementById("out").value = metin;
-
   navigator.clipboard.writeText(metin);
 }
-</script>
 
+</script>
 </body>
 </html>
