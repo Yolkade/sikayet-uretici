@@ -2,41 +2,41 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Akıllı Şikayet Yazıcı</title>
+<title>Şikayet Yazıcı PRO</title>
 
 <style>
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: #0f172a;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background:#0f172a;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
 .box {
-  width: 720px;
-  background: #020617;
-  padding: 25px;
-  border-radius: 16px;
+  width:720px;
+  background:#020617;
+  padding:25px;
+  border-radius:16px;
 }
 
-input, select, textarea, button {
-  width: 100%;
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
+input, textarea, button {
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  border-radius:8px;
+  border:none;
 }
 
 button {
-  background: #22c55e;
-  cursor: pointer;
+  background:#22c55e;
+  cursor:pointer;
 }
 
 textarea {
-  height: 180px;
+  height:200px;
 }
 </style>
 </head>
@@ -44,15 +44,12 @@ textarea {
 <body>
 
 <div class="box">
-<h2>🧠 Akıllı Şikayet Yazıcı</h2>
+<h2>🧠 Şikayet Metni Üretici</h2>
 
-<select id="kategori">
-  <option value="ucak">Uçak Bileti</option>
-  <option value="servis">Teknik Servis</option>
-  <option value="kargo">Kargo</option>
-</select>
-
-<input id="detay" placeholder="Özel detay yaz (örn: kedimle seyahat edecektim, izin verilmedi)">
+<input id="konu" placeholder="Konu (örn: uçak bileti, teknik servis, kargo)">
+<input id="detay" placeholder="İstersen detay ekle (örn: kedimle seyahat edecektim)">
+<input id="min" type="number" placeholder="Min karakter (örn: 400)">
+<input id="max" type="number" placeholder="Max karakter (örn: 900)">
 
 <button onclick="uret()">Metin Üret & Kopyala</button>
 
@@ -62,56 +59,81 @@ textarea {
 
 <script>
 
-const senaryolar = {
-  ucak: [
-    "uçuşumla ilgili sorun yaşadım",
-    "biletimle ilgili beklenmedik bir durum oluştu",
-    "rezervasyon sürecinde ciddi bir problemle karşılaştım"
-  ],
-  servis: [
-    "cihazımın tamiri için başvurdum",
-    "servis sürecinde sorun yaşadım",
-    "onarım işlemi sırasında problem çıktı"
-  ],
-  kargo: [
-    "gönderim sürecinde sorun yaşadım",
-    "teslimat beklediğim gibi gerçekleşmedi",
-    "kargo sürecinde ciddi aksaklıklar oldu"
-  ]
-};
+function kategoriBul(konu){
+  konu = konu.toLowerCase();
 
-const sorunlar = {
-  ucak: [
-    "bana verilen bilgiler ile yaşadığım durum tamamen farklıydı",
-    "söylenen koşullar sonradan geçerli olmadı",
-    "hizmet beklentimin çok altında kaldı"
-  ],
-  servis: [
-    "başta söylenen ile sonradan yapılan işlemler uyuşmadı",
-    "ücretlendirme tamamen değiştirildi",
-    "süreç şeffaf şekilde ilerlemedi"
-  ],
-  kargo: [
-    "teslimat süreci kontrolsüz ilerledi",
-    "bilgilendirme yapılmadı",
-    "paketin durumu hakkında net bilgi verilmedi"
-  ]
-};
+  if(konu.includes("uçak") || konu.includes("bilet") || konu.includes("havayolu")){
+    return {nesne:"bilet", olay:["iptal edemedim","iade yapılmadı","rezervasyon sorunu yaşadım"]};
+  }
+
+  if(konu.includes("kargo") || konu.includes("teslim")){
+    return {nesne:"kargo", olay:["teslim edilmedi","gecikti","kayboldu"]};
+  }
+
+  if(konu.includes("servis") || konu.includes("tamir") || konu.includes("cihaz")){
+    return {nesne:"cihaz", olay:["yüksek ücret istendi","tamir edilmedi","gereksiz işlem yapıldı"]};
+  }
+
+  return {nesne:"hizmet", olay:["beklentimi karşılamadı","sorun yaşadım","olumsuz deneyim yaşadım"]};
+}
+
+const giris = [
+"Başta her şey normal görünüyordu.",
+"İlk başta herhangi bir sorun yoktu.",
+"Böyle bir durum yaşayacağımı düşünmemiştim.",
+"Süreç başlangıçta sorunsuz ilerledi.",
+"İlk etapta her şey yolundaydı."
+];
+
+const baglac = [
+"Ancak sonrasında işler değişti.",
+"Fakat süreç ilerledikçe sorunlar başladı.",
+"Ne yazık ki daha sonra durum farklılaştı.",
+"Sonrasında beklenmedik gelişmeler oldu.",
+"Devamında süreç kontrolden çıktı."
+];
+
+const sonuc = [
+"Ödeme yaptıktan sonra iletişim kesildi.",
+"Sonrasında kimseye ulaşamadım.",
+"Hiçbir geri dönüş yapılmadı.",
+"Defalarca aramama rağmen sonuç alamadım.",
+"Tüm çabalarıma rağmen çözüm bulamadım."
+];
+
+const kapanis = [
+"Bu durum ciddi mağduriyet oluşturdu.",
+"Benzer durumların yaşanmaması için incelenmeli.",
+"Bu şekilde hizmet verilmesi kabul edilemez.",
+"Bu konuda gerekli işlemlerin yapılması gerekiyor.",
+"Bu durum açıkça problemli bir süreçtir."
+];
 
 function r(a){return a[Math.floor(Math.random()*a.length)]}
 
 function uret(){
-  let kat = document.getElementById("kategori").value;
+  let konu = document.getElementById("konu").value || "hizmet";
   let detay = document.getElementById("detay").value;
+  let min = parseInt(document.getElementById("min").value) || 400;
+  let max = parseInt(document.getElementById("max").value) || 900;
 
-  let metin = `
-${r(senaryolar[kat])}. 
-Başlangıçta her şey normal görünüyordu ancak süreç ilerledikçe sorunlar ortaya çıkmaya başladı. 
-${r(sorunlar[kat])}. 
+  let k = kategoriBul(konu);
+
+  let metin = "";
+
+  while(metin.length < min){
+    metin += `
+${r(giris)} ${konu} ile ilgili bir işlem başlattım.
+${r(baglac)} ${k.nesne} konusunda ${r(k.olay)}.
 ${detay ? detay + "." : ""}
-Bu durum karşısında çözüm bulmaya çalıştım ancak herhangi bir geri dönüş alamadım. 
-Yaşadığım bu deneyim ciddi bir mağduriyet oluşturdu ve sürecin bu şekilde ilerlemesi kabul edilebilir değil.
+${r(sonuc)} ${k.nesne} hakkında net bilgi alamadım.
+${r(kapanis)}
 `;
+  }
+
+  if(metin.length > max){
+    metin = metin.substring(0,max);
+  }
 
   document.getElementById("out").value = metin;
   navigator.clipboard.writeText(metin);
