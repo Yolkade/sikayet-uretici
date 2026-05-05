@@ -2,66 +2,41 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Şikayet Üretici PRO</title>
+<title>Akıllı Şikayet Yazıcı</title>
+
 <style>
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#0f172a,#020617);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+  background: #0f172a;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .box {
-  width:720px;
-  background:#020617;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 0 40px rgba(0,0,0,0.5);
+  width: 720px;
+  background: #020617;
+  padding: 25px;
+  border-radius: 16px;
 }
 
-h2 {margin-bottom:15px;}
-
-label {font-size:14px; opacity:0.8;}
-
-input, select {
-  width:100%;
-  padding:12px;
-  margin-top:5px;
-  margin-bottom:12px;
-  border-radius:8px;
-  border:none;
-  background:#0f172a;
-  color:#fff;
+input, select, textarea, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
 }
 
 button {
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#22c55e;
-  font-size:16px;
-  cursor:pointer;
+  background: #22c55e;
+  cursor: pointer;
 }
 
 textarea {
-  width:100%;
-  height:200px;
-  margin-top:15px;
-  border-radius:10px;
-  padding:10px;
-  background:#020617;
-  color:#fff;
-}
-
-.copymsg {
-  text-align:center;
-  margin-top:8px;
-  color:#22c55e;
-  display:none;
+  height: 180px;
 }
 </style>
 </head>
@@ -69,111 +44,77 @@ textarea {
 <body>
 
 <div class="box">
-<h2>🔥 Şikayet Metni Üretici</h2>
+<h2>🧠 Akıllı Şikayet Yazıcı</h2>
 
-<label>Konu</label>
 <select id="kategori">
-  <option value="servis">Teknik Servis</option>
   <option value="ucak">Uçak Bileti</option>
-  <option value="kargo">Kargo / Teslimat</option>
+  <option value="servis">Teknik Servis</option>
+  <option value="kargo">Kargo</option>
 </select>
 
-<label>Minimum karakter</label>
-<input id="min" type="number" placeholder="400">
-
-<label>Maksimum karakter</label>
-<input id="max" type="number" placeholder="900">
+<input id="detay" placeholder="Özel detay yaz (örn: kedimle seyahat edecektim, izin verilmedi)">
 
 <button onclick="uret()">Metin Üret & Kopyala</button>
 
 <textarea id="out" readonly></textarea>
-<div class="copymsg" id="copymsg">✔ Kopyalandı</div>
 
 </div>
 
 <script>
 
-const data = {
-servis: {
-  konu:"servis",
-  olay:["arıza büyütüldü","yüksek ücret talep edildi","beklenmedik masraflar çıkarıldı"],
-  nesne:"cihaz",
-},
-ucak: {
-  konu:"uçak bileti",
-  olay:["rezervasyon iptal edildi","iade yapılmadı","bilet sorunu yaşadım"],
-  nesne:"bilet",
-},
-kargo: {
-  konu:"kargo",
-  olay:["teslimat gecikti","paket kayboldu","ürün hasarlı geldi"],
-  nesne:"ürün",
-}
+const senaryolar = {
+  ucak: [
+    "uçuşumla ilgili sorun yaşadım",
+    "biletimle ilgili beklenmedik bir durum oluştu",
+    "rezervasyon sürecinde ciddi bir problemle karşılaştım"
+  ],
+  servis: [
+    "cihazımın tamiri için başvurdum",
+    "servis sürecinde sorun yaşadım",
+    "onarım işlemi sırasında problem çıktı"
+  ],
+  kargo: [
+    "gönderim sürecinde sorun yaşadım",
+    "teslimat beklediğim gibi gerçekleşmedi",
+    "kargo sürecinde ciddi aksaklıklar oldu"
+  ]
 };
 
-const giris = [
-"Başta her şey normal görünüyordu.",
-"İlk başta sıradan bir işlem sandım.",
-"Böyle bir durum yaşayacağımı düşünmemiştim.",
-"Her şey normal başladı.",
-"Başlangıçta sorun yoktu."
-];
-
-const baglac = [
-"Ancak sonrasında işler değişti.",
-"Fakat süreç ilerledikçe sorunlar başladı.",
-"Ne yazık ki daha sonra durum farklılaştı.",
-"Sonrasında beklenmedik gelişmeler oldu.",
-"Devamında süreç kontrolden çıktı."
-];
-
-const sonuc = [
-"Ödeme yaptıktan sonra iletişim kesildi.",
-"Sonrasında kimseye ulaşamadım.",
-"Hiçbir geri dönüş yapılmadı.",
-"Defalarca aramama rağmen sonuç alamadım.",
-"Firma tamamen ortadan kayboldu."
-];
-
-const kapanis = [
-"Bu durum ciddi mağduriyet oluşturdu.",
-"Benzer durumların yaşanmaması için incelenmeli.",
-"Bu şekilde hizmet verilmesi kabul edilemez.",
-"Bu konuda gerekli işlemlerin yapılması gerekiyor.",
-"Bu durum açıkça problemli bir süreçtir."
-];
+const sorunlar = {
+  ucak: [
+    "bana verilen bilgiler ile yaşadığım durum tamamen farklıydı",
+    "söylenen koşullar sonradan geçerli olmadı",
+    "hizmet beklentimin çok altında kaldı"
+  ],
+  servis: [
+    "başta söylenen ile sonradan yapılan işlemler uyuşmadı",
+    "ücretlendirme tamamen değiştirildi",
+    "süreç şeffaf şekilde ilerlemedi"
+  ],
+  kargo: [
+    "teslimat süreci kontrolsüz ilerledi",
+    "bilgilendirme yapılmadı",
+    "paketin durumu hakkında net bilgi verilmedi"
+  ]
+};
 
 function r(a){return a[Math.floor(Math.random()*a.length)]}
 
 function uret(){
   let kat = document.getElementById("kategori").value;
-  let min = parseInt(document.getElementById("min").value) || 400;
-  let max = parseInt(document.getElementById("max").value) || 900;
+  let detay = document.getElementById("detay").value;
 
-  let d = data[kat];
-  let metin = "";
-
-  while(metin.length < min){
-    metin += `
-${r(giris)} ${d.konu} ile ilgili bir işlem başlattım.
-${r(baglac)} ${d.nesne} ile ilgili olarak ${r(d.olay)}.
-${r(sonuc)} ${d.nesne} hakkında hiçbir bilgi alamadım.
-${r(kapanis)}
+  let metin = `
+${r(senaryolar[kat])}. 
+Başlangıçta her şey normal görünüyordu ancak süreç ilerledikçe sorunlar ortaya çıkmaya başladı. 
+${r(sorunlar[kat])}. 
+${detay ? detay + "." : ""}
+Bu durum karşısında çözüm bulmaya çalıştım ancak herhangi bir geri dönüş alamadım. 
+Yaşadığım bu deneyim ciddi bir mağduriyet oluşturdu ve sürecin bu şekilde ilerlemesi kabul edilebilir değil.
 `;
-  }
-
-  if(metin.length > max){
-    metin = metin.substring(0,max);
-  }
 
   document.getElementById("out").value = metin;
-
   navigator.clipboard.writeText(metin);
-  document.getElementById("copymsg").style.display="block";
-
-  setTimeout(()=>{
-    document.getElementById("copymsg").style.display="none";
-  },1500);
 }
 
 </script>
